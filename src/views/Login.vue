@@ -1,5 +1,5 @@
 <template>
-  <div style="display:flex;margin:auto;">
+  <div id="login">
     <Card style="width:350px" v-if="ddd">
       <p slot="title" style="font-size:20px">登录</p>
       <a href="#" slot="extra" @click="ddd = false">
@@ -8,11 +8,11 @@
       <div id="loginBox">
         <p>
           <Icon type="md-contact" size="25" />
-          <Input v-model="loginUser" placeholder="请输入账号"></Input>
+          <Input v-model="loginUser" placeholder="请输入账号" />
         </p>
         <p>
           <Icon type="md-lock" size="25" />
-          <Input v-model="loginPwd" type="password" placeholder="请输入密码"></Input>
+          <Input v-model="loginPwd" type="password" placeholder="请输入密码"/>
         </p>
         <i-button type="primary" :loading="loading" @click="login()" style="margin:0 auto;">
           <span v-if="!loading">登录</span>
@@ -22,27 +22,27 @@
     </Card>
     <Card style="width:350px" v-else>
       <p slot="title" style="font-size:20px">注册</p>
-      <a href="#" slot="extra" @click="ddd = true">
+      <a href="#" slot="extra" @click="zcShow()">
         <Icon type="md-close" />
       </a>
       <div id="loginBox">
         <p>
           <Icon type="md-person" size="25" />
-          <Input v-model="regNick" placeholder="请输入用户名"></Input>
+          <Input v-model="regNick" placeholder="请输入用户名"/>
         </p>
         <p>
           <Icon type="md-contact" size="25" />
-          <Input v-model="regUser" @on-blur="selectUser()" placeholder="请输入账号"></Input>
+          <Input v-model="regUser" @on-blur="selectUser()" placeholder="请输入账号"/>
         </p>
         <p>
           <Icon type="md-lock" size="25" />
-          <Input v-model="regPwd" type="password" placeholder="请输入密码"></Input>
+          <Input v-model="regPwd" type="password" placeholder="请输入密码"/>
         </p>
         <p>
           <Icon type="md-lock" size="25" />
-          <Input v-model="regPwds" type="password" placeholder="请确认密码"></Input>
+          <Input v-model="regPwds" type="password" placeholder="请确认密码"/>
         </p>
-        <i-button type="primary" style="margin-right:20px" @click="ddd = true">
+        <i-button type="primary" style="margin-right:20px" @click="zcShow()">
           <span>取消</span>
         </i-button>
         <i-button type="primary" :loading="loading1" @click="register()" style="margin:0 auto;">
@@ -83,7 +83,11 @@ export default {
 
   methods: {
     zcShow() {
-      this.ddd = false;
+      this.regNick = ""
+      this.regUser = ""
+      this.regPwd = ""
+      this.regPwds = ""
+      this.ddd = true;
     },
     //发送登录请求
     login() {
@@ -150,8 +154,8 @@ export default {
               content: res.data.message,
               duration: 2
             });
-            this.ddd = true;
             this.loading1 = false;
+            this.zcShow()
           } else {
             alert(res.data);
           }
@@ -186,7 +190,8 @@ export default {
     },
     //注册账号查询
     selectUser(){
-      this.axios({
+      if(this.regUser){
+        this.axios({
         method:"get",
         url:"login/select",
         params: {
@@ -210,6 +215,8 @@ export default {
       .catch(e => {
         console.log(e)
       })
+      }
+      
     },
     //正则判断
     /* tests(val){
@@ -228,6 +235,17 @@ export default {
 };
 </script>
 <style lang='less' scoped>
+#login{
+  width: 100%;
+  height: 100%;
+  background: url(../assets/imgs/preview.jpg) no-repeat center;
+  background-size: 100% 100%;
+  display: flex;
+  .ivu-card{
+    margin: auto;
+    opacity: .8;
+  }
+}
 #loginBox {
   text-align: center;
   p {
