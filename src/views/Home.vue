@@ -1,6 +1,6 @@
 <template>
-  <div>
-    嘟嘟嘟
+  <div style="margin:0 auto;">
+    <h1 style="margin:0 auto;">嘟嘟嘟</h1>
   </div>
 </template>
 
