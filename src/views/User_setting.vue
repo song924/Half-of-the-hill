@@ -1,6 +1,7 @@
 <template>
   <div id="user_setting">
     <Row>
+
       <Col span="5">
         <Menu :theme="theme3" active-name="1">
           <MenuGroup title="基础设置">
@@ -21,14 +22,16 @@
           </MenuGroup>
         </Menu>
       </Col>
+
       <Col span="19" class="rightBox">
         <div class="imgBox">
-          <!-- <Card></Card> -->
+          <Card :style="[{'background':`url(${serverUrl})`,'background-size':`${imgSize}`}]"></Card>
           <input @change="getImgInfo" type="file" />
 
           <!-- <Button @click="upUserDate" style="">更换头像</Button> -->
         </div>
       </Col>
+
     </Row>
   </div>
 </template>
@@ -39,7 +42,9 @@ export default {
   props: [""],
   data() {
     return {
-      theme3: "dark"
+      theme3: "dark",
+      serverUrl:"",
+      imgSize:""
     };
   },
 
@@ -60,6 +65,8 @@ export default {
         })  
         .then(res =>{
             console.log(res)
+            this.serverUrl = res.data.url
+            this.imgSize = "100%"
         })
         .catch(e =>{
             console.log(e)
@@ -78,6 +85,7 @@ export default {
         var imgFiles = e.target.files[0];
         var formdata = new FormData();
         formdata.append("imges", imgFiles);
+        formdata.append("user", "111");
         this.upUserDate(formdata)
         console.log(str,sizes,jq,formdata.append)
 
@@ -107,8 +115,7 @@ export default {
     .ivu-card {
       width: 140px;
       height: 140px;
-      background: url("../assets/imgs/preview.jpg") no-repeat center;
-      background-size: 100%;
+      background-size:100%;
       margin: 0 auto;
     }
     .imgBox {
