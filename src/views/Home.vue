@@ -24,11 +24,15 @@
       <MenuItem name="4">
         <Icon type="ios-construct" />运动设置
       </MenuItem>
-      <MenuItem class="userImg" name="5">
-        <img src="../assets/imgs/preview.jpg" alt="" srcset="">
+      <MenuItem class="userImg" name="5" >
+        <img @click="goUser" :src="userinfo.iconUrl" alt="" srcset="">
       </MenuItem>
     </Menu>
-    
+    <div style="line-height:60px;text-align:center;">
+      <p>最适合大侠的线路是：{{jyxl}}</p>
+      <p>最适合大侠的地皮是：{{jydp}}</p>
+     <Button type="info" @click="rua">开始</Button>
+    </div>
   </div>
 </template>
 
@@ -38,7 +42,10 @@ export default {
   props: [""],
   data() {
     return {
-      theme1: "dark"
+      theme1: "dark",
+      userinfo:JSON.parse(sessionStorage.userInfo),
+      jyxl:0,
+      jydp:0,
     };
   },
 
@@ -50,7 +57,24 @@ export default {
 
   mounted() {},
 
-  methods: {},
+  methods: {
+    goUser(){
+      console.log("嘟嘟嘟")
+      this.$router.push({ path: "/user_setting", query: {} });
+    },
+    rua(){
+      var ddd = setInterval(()=>{
+        this.jyxl = parseInt(Math.random()*400)+1
+      },60)
+      var bbb = setInterval(()=>{
+        this.jydp = parseInt(Math.random()*33)+1
+      },60)
+      setTimeout(()=>{
+        clearInterval(ddd)
+        clearInterval(bbb)
+      },3000)
+    }
+  },
 
   watch: {}
 };

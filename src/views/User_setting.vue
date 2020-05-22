@@ -25,10 +25,10 @@
 
       <Col span="19" class="rightBox">
         <div class="imgBox">
-          <Card :style="[{'background':`url(${serverUrl})`,'background-size':`${imgSize}`}]"></Card>
+            <div class="userImg">
+            <img style="width:135px;height:135px" :src="userinfo.iconUrl" alt="" srcset="">
+            </div>
           <input @change="getImgInfo" type="file" />
-
-          <!-- <Button @click="upUserDate" style="">更换头像</Button> -->
         </div>
       </Col>
 
@@ -44,7 +44,8 @@ export default {
     return {
       theme3: "dark",
       serverUrl:"",
-      imgSize:""
+      imgSize:"",
+      userinfo:JSON.parse(sessionStorage.userInfo)
     };
   },
 
@@ -65,7 +66,8 @@ export default {
         })  
         .then(res =>{
             console.log(res)
-            this.serverUrl = res.data.url
+            this.userinfo.iconUrl = res.data.url
+            sessionStorage.setItem("userInfo",JSON.stringify(this.userinfo))
             this.imgSize = "100%"
         })
         .catch(e =>{
@@ -75,7 +77,7 @@ export default {
     getImgInfo(e) {
       console.log(e.target.files);
       var imgSize = 2000000;
-      var zzz = /\.(jpg|png|jpeg|bmp)/i;
+      var zzz = /\.(jpg|png|jpeg|bmp|gif)/i;
       var str = e.target.files[0].name;
       var sizes = e.target.files[0].size;
       var last = str.lastIndexOf(".");
@@ -85,7 +87,7 @@ export default {
         var imgFiles = e.target.files[0];
         var formdata = new FormData();
         formdata.append("imges", imgFiles);
-        formdata.append("user", "111");
+        formdata.append("user", this.userinfo.account);
         this.upUserDate(formdata)
         console.log(str,sizes,jq,formdata.append)
 
@@ -112,11 +114,11 @@ export default {
   .rightBox {
     padding: 10px;
     background-color: #fff;
-    .ivu-card {
+    .userImg {
       width: 140px;
       height: 140px;
-      background-size:100%;
       margin: 0 auto;
+      border:1px solid #ccc;
     }
     .imgBox {
       text-align: center;

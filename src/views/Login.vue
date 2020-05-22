@@ -101,7 +101,7 @@ export default {
         }
       })
         .then(res => {
-          console.log(res);
+          console.log(res.data);
           if (res.data.result == "0") {
             this.$Message["error"]({
               background: true,
@@ -117,6 +117,14 @@ export default {
               duration: 2
             });
             this.loading = false;
+            // this.$store.state.userInfo = res.data.info[0]
+            var userInfo = {
+              name: res.data.info[0].nickname,
+              account: res.data.info[0].user_name,
+              iconUrl: res.data.info[0].user_img,
+            }
+            sessionStorage.setItem("userInfo",JSON.stringify(userInfo))
+            console.log(this.$store.state.userInfo)
             this.$router.replace({ path: "/index", query: {} });
           }
         })
@@ -161,10 +169,11 @@ export default {
           }
         })
         .catch(e => {
+          console.log(e)
           this.$Message["error"]({
               background: true,
               content: "服务器请求错误",
-              duration: 3
+              duration: 3 
             });
             this.loading = false;
       });
@@ -227,7 +236,6 @@ export default {
       }else{
         console.log("2")        
       }
-
     } */
   },
 
