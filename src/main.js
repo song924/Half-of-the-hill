@@ -6,6 +6,16 @@ import axios from 'axios'
 import ViewUI from 'view-design';
 import 'view-design/dist/styles/iview.css';
 
+import VueSocketIO from 'vue-socket.io'
+import socketio from 'socket.io-client';
+Vue.use(new VueSocketIO({
+
+    debug: true,
+
+    connection: socketio('http://129.204.239.117:3000/')
+
+}))
+
 /* import { Switch } from 'iview'
 Vue.component('i-switch', Switch)
 import { Circle } from 'iview'

@@ -2,10 +2,10 @@
   <div id="index" style>
     <Menu mode="horizontal" :theme="theme1" active-name="1">
       <MenuItem name="1">
-        <Icon type="ios-paper" />时间管理
+        <Icon type="ios-paper" />首页
       </MenuItem>
-      <MenuItem name="2">
-        <Icon type="ios-people" />女友管理
+      <MenuItem name="2" :to="'/index/chat'">
+        <Icon type="ios-people" />聊天室
       </MenuItem>
       <Submenu name="3">
         <template slot="title">
@@ -24,15 +24,16 @@
       <MenuItem name="4">
         <Icon type="ios-construct" />运动设置
       </MenuItem>
-      <MenuItem class="userImg" name="5" >
-        <img @click="goUser" :src="userinfo.iconUrl" alt="" srcset="">
+      <MenuItem class="userImg" name="5" :to="'/index/user_setting'">
+        <img  :src="userinfo.iconUrl" alt="" srcset="">
       </MenuItem>
     </Menu>
-    <div style="line-height:60px;text-align:center;">
+    <router-view class="content"/>
+    <!-- <div style="line-height:60px;text-align:center;">
       <p>最适合大侠的线路是：{{jyxl}}</p>
       <p>最适合大侠的地皮是：{{jydp}}</p>
      <Button type="info" @click="rua">开始</Button>
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -58,9 +59,9 @@ export default {
   mounted() {},
 
   methods: {
-    goUser(){
+    goUser(url){
       console.log("嘟嘟嘟")
-      this.$router.push({ path: "/user_setting", query: {} });
+      this.$router.push({ path: url, query: {} });
     },
     rua(){
       var ddd = setInterval(()=>{
@@ -95,6 +96,10 @@ export default {
       border-radius: 50%;
       margin: auto;
     }
+  }
+  .content{
+    padding: 10px;
+    height: calc(100% - 60px)
   }
 }
 </style>
