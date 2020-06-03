@@ -66,9 +66,15 @@ export default {
         })  
         .then(res =>{
             console.log(res)
-            this.userinfo.iconUrl = res.data.url
-            sessionStorage.setItem("userInfo",JSON.stringify(this.userinfo))
-            this.imgSize = "100%"
+            if(res.data.status == "401"){
+              alert(res.data.message)
+              this.$store.commit("del_token")
+            }else{
+              this.userinfo.iconUrl = res.data.url
+              sessionStorage.setItem("userInfo",JSON.stringify(this.userinfo))
+              this.imgSize = "100%"
+            }
+            
         })
         .catch(e =>{
             console.log(e)
@@ -89,6 +95,7 @@ export default {
         formdata.append("imges", imgFiles);
         formdata.append("user", this.userinfo.account);
         this.upUserDate(formdata)
+        
         console.log(str,sizes,jq,formdata.append)
 
       } else {

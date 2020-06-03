@@ -101,7 +101,7 @@ export default {
         }
       })
         .then(res => {
-          console.log(res.data);
+          console.log("登录信息",res.data);
           if (res.data.result == "0") {
             this.$Message["error"]({
               background: true,
@@ -122,10 +122,11 @@ export default {
               name: res.data.info[0].nickname,
               account: res.data.info[0].user_name,
               iconUrl: res.data.info[0].user_img,
-            }
+            } 
+            this.$store.commit('set_token',res.data.token)
             sessionStorage.setItem("userInfo",JSON.stringify(userInfo))
             console.log(this.$store.state.userInfo)
-            this.$router.replace({ path: "/index", query: {} });
+            this.$router.replace({ path: "/", query: {} });
           }
         })
         .catch(e => {

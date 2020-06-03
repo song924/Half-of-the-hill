@@ -4,7 +4,7 @@
       <MenuItem name="1">
         <Icon type="ios-paper" />首页
       </MenuItem>
-      <MenuItem name="2" :to="'/index/chat'">
+      <MenuItem name="2" :to="'/chat'">
         <Icon type="ios-people" />聊天室
       </MenuItem>
       <Submenu name="3">
@@ -24,7 +24,7 @@
       <MenuItem name="4">
         <Icon type="ios-construct" />运动设置
       </MenuItem>
-      <MenuItem class="userImg" name="5" :to="'/index/user_setting'">
+      <MenuItem class="userImg" name="5" :to="'/user_setting'">
         <img  :src="userinfo.iconUrl" alt="" srcset="">
       </MenuItem>
     </Menu>
@@ -44,7 +44,7 @@ export default {
   data() {
     return {
       theme1: "dark",
-      userinfo:JSON.parse(sessionStorage.userInfo),
+      userinfo:sessionStorage.userInfo?JSON.parse(sessionStorage.userInfo):"",
       jyxl:0,
       jydp:0,
     };
