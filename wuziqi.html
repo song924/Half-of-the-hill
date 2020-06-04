@@ -1,0 +1,433 @@
+ <!DOCTYPE html>
+ <html lang="en">
+
+ <head>
+     <meta charset="UTF-8">
+     <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+     <meta name="viewport" content="target-densitydpi=320,width=640,user-scalable=no">
+     <style>
+         #canvas_0 {
+             box-sizing: border-box;
+             position: fixed;
+             top: 50%;
+             left: 50%;
+             transform: translate(-50%, -50%);
+             border: 1px solid black;
+             background-color: #FFD75B;
+             z-index: 5;
+         }
+
+         #canvas_1 {
+             position: fixed;
+             top: 50%;
+             left: 50%;
+             transform: translate(-50%, -50%);
+             z-index: 10;
+         }
+
+         #shadowBox {
+             position: fixed;
+             top: 50%;
+             left: 50%;
+             transform: translate(-50%, -50%);
+             border: 20px solid #FFD75B;
+         }
+
+         #back1 {
+             position: absolute;
+             top: 10%;
+             left: 50%;
+             transform: translateX(-50%);
+             width: 50px;
+             height: 50px;
+             line-height: 50px;
+             border-radius: 50%;
+             font-size: 20px;
+             background-color: red;
+             color: white;
+         }
+
+         #back2 {
+             position: absolute;
+             bottom: 10%;
+             left: 50%;
+             transform: translateX(-50%);
+             width: 50px;
+             height: 50px;
+             line-height: 50px;
+             border-radius: 50%;
+             font-size: 20px;
+             background-color: red;
+             color: white;
+         }
+     </style>
+     <script type="text/javascript">
+         window.onresize = function () {
+             resetPage();
+         }
+
+         function resetPage() {
+             var deviceWidth = document.documentElement.clientWidth || document.body.clientWidth;
+             var deviceHeight = document.documentElement.clientHeight || document.body.clientHeight;
+             var scale = deviceWidth / 480;
+             deviceHeight = deviceHeight / scale;
+             document.body.style.zoom = scale;
+             document.body.style.height = deviceHeight + 'px';
+         }
+     </script>
+     <title>Document</title>
+ </head>
+
+ <body>
+     <canvas id="canvas_0" width="560px" height="560px"></canvas>
+     <canvas id="canvas_1" width="600px" height="600px"></canvas>
+     <div id="shadowBox"></div>
+     <div id="back1">后退</div>
+     <div id="back2">后退</div>
+     <script>
+         /* -----------------------------------------------------------初始化部分-------------------------------------------------------------- */
+         var Board = document.getElementById('canvas_0');
+         var BoardToGraw = document.getElementById('canvas_1');
+         var shadowBox = document.getElementById('shadowBox');
+         var back = document.getElementById('back1');
+         var back = document.getElementById('back2');
+         var windowWidth = document.documentElement.clientWidth || document.body.clientWidth; //拿到当前浏览器可视宽度
+         var windowHeight = document.documentElement.clientHeight || document.body.clientHeight; //拿到当前浏览器可视高度
+         Board.style.width = windowWidth * 0.9 + "px"; //棋盘宽度为当前浏览器可视宽度的90%
+         Board.style.height = windowWidth * 0.9 + "px"; //棋盘高度为当前浏览器可视宽度的90%
+         BoardToGraw.style.width = windowWidth * 0.9 + 40 + "px"; //棋子canvas宽度为当前浏览器可视宽度的90% + 左右各20px
+         BoardToGraw.style.height = windowWidth * 0.9 + 40 + "px"; //棋子canvas高度为当前浏览器可视宽度的90% + 上下各20px
+         shadowBox.style.width = windowWidth * 0.9 + "px"; //边框宽度为当前浏览器可视宽度的90%
+         shadowBox.style.height = windowWidth * 0.9 + "px"; //边框高度为当前浏览器可视宽度的90%
+
+         /* -----------------------------------------------------------棋盘部分-------------------------------------------------------------- */
+         var piecesList = []; //棋子数组
+         // 15×15
+         if (Board.getContext) {
+             var ctx0 = Board.getContext('2d'); /*获取上下文，或者说绘制工具箱ctx*/
+             /*1、构造函数*/
+             var LineChart = function (ctx0) {
+                 /*获取绘图工具*/
+                 this.ctx0 = ctx0 || document.getElementById('canvas_0').getContext('2d');
+                 /*画布的大小*/
+                 this.canvasWidth = 560; //这里是算过了，560/14 = 20 ， 每个格子20
+                 this.canvasHeight = 560;
+             }
+             /*2、行为方法 */
+             LineChart.prototype.init = function () {
+                 this.drawGrid();
+                 // 画四个点
+                 let LineTotal = 13;
+                 let EmptyWidth = this.canvasWidth / (LineTotal + 1);
+                 this.DrawCircle(EmptyWidth * 3, EmptyWidth * 3, 5, "#000");
+                 this.DrawCircle(this.canvasWidth - EmptyWidth * 3, EmptyWidth * 3, 5, "#000");
+                 this.DrawCircle(EmptyWidth * 3, this.canvasHeight - EmptyWidth * 3, 5, "#000");
+                 this.DrawCircle(this.canvasWidth - EmptyWidth * 3, this.canvasHeight - EmptyWidth * 3, 5, "#000");
+             }
+             /*绘制网格*/
+             LineChart.prototype.drawGrid = function () {
+                 /*x方向的线*/
+                 let LineTotal = 13;
+                 let EmptyWidth = this.canvasWidth / (LineTotal + 1);
+                 //画X轴方向
+                 for (let i = 0; i < LineTotal; i++) {
+                     this.ctx0.beginPath();
+                     this.ctx0.moveTo(0, EmptyWidth * (i + 1));
+                     this.ctx0.lineTo(this.canvasWidth, EmptyWidth * (i + 1));
+                     this.ctx0.strokeStyle = '#000';
+                     this.ctx0.closePath();
+                     this.ctx0.stroke();
+                 }
+                 /*y方向的线*/
+                 for (let i = 0; i < LineTotal; i++) {
+                     this.ctx0.beginPath();
+                     this.ctx0.moveTo(EmptyWidth * (i + 1), 0);
+                     this.ctx0.lineTo(EmptyWidth * (i + 1), this.canvasHeight);
+                     this.ctx0.strokeStyle = '#000';
+                     this.ctx0.closePath();
+                     this.ctx0.stroke();
+                 }
+             }
+             LineChart.prototype.DrawCircle = function (start, end, r, color) {
+                 this.ctx0.beginPath();
+                 this.ctx0.moveTo(start - r, end);
+                 this.ctx0.arc(start, end, r, 2 * Math.PI, 0, true);
+                 this.ctx0.strokeStyle = color;
+                 this.ctx0.closePath();
+                 this.ctx0.fillStyle = color;
+                 this.ctx0.fill();
+             }
+             var lineChart = new LineChart();
+             lineChart.init();
+         } else {
+             console.log("error!!!");
+         }
+
+         /* -----------------------------------------------------------旗子部分-------------------------------------------------------------- */
+         if (BoardToGraw.getContext) {
+             var ctx0 = BoardToGraw.getContext('2d'); /*获取上下文，或者说绘制工具箱ctx*/
+             /*1、构造函数*/
+             var LineChart2 = function (ctx0) {
+                 /*获取绘图工具*/
+                 this.ctx0 = ctx0 || document.getElementById('canvas_1').getContext('2d');
+                 /*画布的大小*/
+                 this.canvasWidth = 600;
+                 this.canvasHeight = 600;
+             }
+             //绘制整个棋子数组的函数
+             LineChart2.prototype.DrawCircleList = function (circleList) {
+                 let r = 18;
+                 for (circle of circleList) {
+                     this.ctx0.beginPath();
+                     this.ctx0.moveTo(circle.X * 40 + 20 - r, circle.Y);
+                     this.ctx0.arc(circle.X * 40 + 20, circle.Y * 40 + 20, r, 2 * Math.PI, 0, true);
+                     this.ctx0.strokeStyle = circle.color;
+                     this.ctx0.closePath();
+                     this.ctx0.fillStyle = circle.color;
+                     this.ctx0.fill();
+                 }
+             }
+             var LineChart2 = new LineChart2();
+         } else {
+             console.log("error!!!");
+         }
+
+         /* -----------------------------------------------------------触摸事件部分-------------------------------------------------------------- */
+         BoardToGraw.addEventListener('click', (event) => {
+             //每click一次，清除一次canvas，数组中添加当前棋子，重绘
+             let x = event.offsetX;
+             let y = event.offsetY;
+             //棋子排位位置
+             let rankingX, rankingY;
+             //最终画出的位置
+             let endX, endY;
+             var data = {}; //用于储存单个棋子信息
+             var color = (piecesList.length % 2) == 1 ? "white" : "black"; //从黑开始交替下子
+             rankingX = Math.round((x - 20) / 40); //比如如果是左上角的小黑点位置的棋子，rankingX = 3
+             rankingY = Math.round((y - 20) / 40); //比如如果是左上角的小黑点位置的棋子，rankingY = 3
+             //rankingX,rankingY可能为-0
+             rankingX == -0 ? rankingX = 0 : rankingX = rankingX; //如果是-0，转化为0
+             rankingY == -0 ? rankingY = 0 : rankingY = rankingY; //如果是-0，转化为0
+             endX = rankingX * 40 + 20; //真正应该画在的地方，endX = 140
+             endY = rankingY * 40 + 20; //真正应该画在的地方，endY = 140
+             //封装进piecesList的棋子排位对象
+             data.X = rankingX;
+             data.Y = rankingY;
+             data.color = color;
+             //data = {X:3,Y:3,color:"black"}
+             for (pieces of piecesList) { //如果此次下的棋子位置与之前的棋子数组中的发生重复，那么退出这个函数
+                 if (pieces.X == data.X && pieces.Y == data.Y) {
+                     return;
+                 }
+             }
+             clearCanvas(); //清除整个棋子canvas
+             piecesList.push(data); //下棋成功，push进棋子数组
+             LineChart2.DrawCircleList(piecesList); //将push后的棋子数组传入绘制函数
+             checkFiveLink(piecesList); //重绘后，判断是否有胜利者。
+         })
+
+         /* -----------------------------------------------------------判断八个方向的胜利者-------------------------------------------------------------- */
+         //用于判断是否有五子相连的函数
+         var checkFiveLink = function (piecesList) {
+             let nowPrices = piecesList[piecesList.length - 1];
+             let bolleanLr = lrCheck(piecesList, nowPrices);
+             let bolleanTb = tbCheck(piecesList, nowPrices);
+             let bolleanRtLb = rtLbCheck(piecesList, nowPrices);
+             let bolleanLtRb = ltRbCheck(piecesList, nowPrices);
+             if (bolleanLr || bolleanTb || bolleanRtLb || bolleanLtRb) {
+                 alert(`${nowPrices.color} : success !!!`);
+                 window.location.reload()
+             }
+         }
+         //水平
+         var lrCheck = function (piecesList, nowPrices) {
+             var count = 1;
+             var count2 = 1;
+             //右
+             for (let i = 0; i < 4; i++) {
+                 let obj = {};
+                 obj.X = nowPrices.X + i + 1;
+                 obj.Y = nowPrices.Y;
+                 obj.color = nowPrices.color;
+                 let staticNum = count;
+                 for (piece of piecesList) {
+                     if (piece.X == obj.X && piece.Y == obj.Y && piece.color == obj.color) {
+                         count++;
+                     }
+                 }
+                 if (staticNum == count) {
+                     break;
+                 }
+             }
+             for (let i = 0; i < 4; i++) {
+                 let obj = {};
+                 obj.X = nowPrices.X - i - 1;
+                 obj.Y = nowPrices.Y;
+                 obj.color = nowPrices.color;
+                 let staticNum = count2;
+                 for (piece of piecesList) {
+                     if (piece.X == obj.X && piece.Y == obj.Y && piece.color == obj.color) {
+                         count2++;
+                     }
+                 }
+                 if (staticNum == count2) {
+                     break;
+                 }
+             }
+             let Link = count + count2 - 1;
+             if (Link >= 5) {
+                 return true;
+             } else {
+                 return false;
+             }
+         }
+         //竖直
+         var tbCheck = function (piecesList, nowPrices) {
+             var count = 1;
+             var count2 = 1;
+             //上
+             for (let i = 0; i < 4; i++) {
+                 let obj = {};
+                 obj.X = nowPrices.X;
+                 obj.Y = nowPrices.Y + i + 1;
+                 obj.color = nowPrices.color;
+                 let staticNum = count;
+                 for (piece of piecesList) {
+                     if (piece.X == obj.X && piece.Y == obj.Y && piece.color == obj.color) {
+                         count++;
+                     }
+                 }
+                 if (staticNum == count) {
+                     break;
+                 }
+             }
+             for (let i = 0; i < 4; i++) {
+                 let obj = {};
+                 obj.X = nowPrices.X;
+                 obj.Y = nowPrices.Y - i - 1;
+                 obj.color = nowPrices.color;
+                 let staticNum = count2;
+                 for (piece of piecesList) {
+                     if (piece.X == obj.X && piece.Y == obj.Y && piece.color == obj.color) {
+                         count2++;
+                     }
+                 }
+                 if (staticNum == count2) {
+                     break;
+                 }
+             }
+             let Link = count + count2 - 1;
+             if (Link >= 5) {
+                 return true;
+             } else {
+                 return false;
+             }
+         }
+         //右上至左下
+         var rtLbCheck = function (piecesList, nowPrices) {
+             var count = 1;
+             var count2 = 1;
+             //右上
+             for (let i = 0; i < 4; i++) {
+                 let obj = {};
+                 obj.X = nowPrices.X + i + 1;
+                 obj.Y = nowPrices.Y + i + 1;
+                 obj.color = nowPrices.color;
+                 let staticNum = count;
+                 for (piece of piecesList) {
+                     if (piece.X == obj.X && piece.Y == obj.Y && piece.color == obj.color) {
+                         count++;
+                     }
+                 }
+                 if (staticNum == count) {
+                     break;
+                 }
+             }
+             for (let i = 0; i < 4; i++) {
+                 let obj = {};
+                 obj.X = nowPrices.X - i - 1;
+                 obj.Y = nowPrices.Y - i - 1;
+                 obj.color = nowPrices.color;
+                 let staticNum = count2;
+                 for (piece of piecesList) {
+                     if (piece.X == obj.X && piece.Y == obj.Y && piece.color == obj.color) {
+                         count2++;
+                     }
+                 }
+                 if (staticNum == count2) {
+                     break;
+                 }
+             }
+             let Link = count + count2 - 1;
+             if (Link >= 5) {
+                 return true;
+             } else {
+                 return false;
+             }
+         }
+         //左上至右下
+         var ltRbCheck = function (piecesList, nowPrices) {
+             var count = 1;
+             var count2 = 1;
+             //左上
+             for (let i = 0; i < 4; i++) {
+                 let obj = {};
+                 obj.X = nowPrices.X - i - 1;
+                 obj.Y = nowPrices.Y + i + 1;
+                 obj.color = nowPrices.color;
+                 let staticNum = count;
+                 for (piece of piecesList) {
+                     if (piece.X == obj.X && piece.Y == obj.Y && piece.color == obj.color) {
+                         count++;
+                     }
+                 }
+                 if (staticNum == count) {
+                     break;
+                 }
+             }
+             for (let i = 0; i < 4; i++) {
+                 let obj = {};
+                 obj.X = nowPrices.X + i + 1;
+                 obj.Y = nowPrices.Y - i - 1;
+                 obj.color = nowPrices.color;
+                 let staticNum = count2;
+                 for (piece of piecesList) {
+                     if (piece.X == obj.X && piece.Y == obj.Y && piece.color == obj.color) {
+                         count2++;
+                     }
+                 }
+                 if (staticNum == count2) {
+                     break;
+                 }
+             }
+             let Link = count + count2 - 1;
+             if (Link >= 5) {
+                 return true;
+             } else {
+                 return false;
+             }
+         }
+
+         /* -----------------------------------------------------------其余按钮操作-------------------------------------------------------------- */
+         back1.addEventListener('click', (event) => {
+             backStep();
+         })
+         back2.addEventListener('click', (event) => {
+             backStep();
+         })
+         //清除canvas画布
+         function clearCanvas() {
+             var c = document.getElementById("canvas_1");
+             c.height = c.height;
+         }
+         //后退一步
+         function backStep() {
+             var c = document.getElementById("canvas_1");
+             c.height = c.height;
+             piecesList.pop();
+             LineChart2.DrawCircleList(piecesList);
+         }
+     </script>
+ </body>
+
+ </html>

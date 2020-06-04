@@ -7,12 +7,13 @@
       <MenuItem name="2" :to="'/chat'">
         <Icon type="ios-people" />聊天室
       </MenuItem>
-      <Submenu name="3">
+      <MenuItem name="3" :to="'/wuziqi'">双人运动</MenuItem>
+     <!--  <Submenu name="3">
         <template slot="title">
           <Icon type="ios-stats" />多人运动
         </template>
         <MenuGroup title="基础运动">
-          <MenuItem name="3-1">双人运动</MenuItem>
+          <MenuItem name="3-1" :to="'wuziqi'">双人运动</MenuItem>
           <MenuItem name="3-2">四人运动</MenuItem>
           <MenuItem name="3-3">五人运动</MenuItem>
         </MenuGroup>
@@ -20,7 +21,7 @@
           <MenuItem name="3-4">百人运动</MenuItem>
           <MenuItem name="3-5">万人运动</MenuItem>
         </MenuGroup>
-      </Submenu>
+      </Submenu> -->
       <MenuItem name="4">
         <Icon type="ios-construct" />运动设置
       </MenuItem>

@@ -37,6 +37,12 @@ if (localStorage.token) {
         name:'chat',
         component: () => import('../views/Chat.vue'),
         meta:{isLogin:true}
+      },
+      {
+        path:'wuziqi',
+        name:'wuziqi',
+        component: () => import('../views/game/Wuziqi.vue'),
+        meta:{isLogin:true}
       }
     ]
   },
