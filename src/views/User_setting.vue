@@ -66,9 +66,12 @@ export default {
         })  
         .then(res =>{
             console.log(res)
-            if(res.data.status == "401"){
-              alert(res.data.message)
+            //如果返回的状态是403证明token失效
+            if(res.data.status == "403"){
+              //调用vuex删除token
               this.$store.commit("del_token")
+              //刷新页面，自动跳转login界面
+              window.location.reload()
             }else{
               this.userinfo.iconUrl = res.data.url
               sessionStorage.setItem("userInfo",JSON.stringify(this.userinfo))

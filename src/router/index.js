@@ -7,8 +7,9 @@ import Login from '../views/Login.vue'
 
 Vue.use(VueRouter)
 
-if (localStorage.getItem('token')) {
-    store.commit('set_token', localStorage.getItem('token'))
+//防止页面刷新丢失token
+if (localStorage.token) {
+    store.commit('set_token', localStorage.token)
 }
   
 
@@ -17,10 +18,14 @@ if (localStorage.getItem('token')) {
     path: '/',
     name: 'Home',
     component: Home,
-    meta:{
-      isLogin:true    // 添加该字段，表示进入这个路由是需要登录的
-    },
+    meta:{isLogin:true},  // 判断该路由是否需要登录权限
     children:[
+      {
+        path:'index',
+        name:'index',
+        component: () => import('../views/Index.vue'),
+        meta:{isLogin:true}
+      },
       {
         path:'user_setting',
         name:'user_setting',
@@ -39,11 +44,6 @@ if (localStorage.getItem('token')) {
     path: '/login',
     name: 'login',
     component: Login,
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    // component: () => import(/* webpackChunkName: "about" */ '../views/Login.vue')
-    
   }
 ]
 

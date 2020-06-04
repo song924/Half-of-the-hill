@@ -18,10 +18,6 @@ Vue.use(new VueSocketIO({
 
 }))
 
-/* import { Switch } from 'iview'
-Vue.component('i-switch', Switch)
-import { Circle } from 'iview'
-Vue.component('i-circle', Circle) */
 axios.defaults.baseURL = 'http://129.204.239.117:3000/';
 Vue.use(ViewUI);
 Vue.config.productionTip = false
@@ -29,8 +25,10 @@ Vue.prototype.axios = axios;
 
 //路由守卫
 router.beforeEach((to, from, next) => {
+  //判断跳转的路由是否有登录权限
   if (to.matched.some(res => res.meta.isLogin)) {
-    if (store.state.token) {
+    //判断token是否失效
+    if (store.state.token) { 
       next()
     } else {
       next({

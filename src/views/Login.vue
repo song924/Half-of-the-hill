@@ -126,7 +126,7 @@ export default {
             this.$store.commit('set_token',res.data.token)
             sessionStorage.setItem("userInfo",JSON.stringify(userInfo))
             console.log(this.$store.state.userInfo)
-            this.$router.replace({ path: "/", query: {} });
+            this.$router.replace({ path: "/index", query: {} });
           }
         })
         .catch(e => {
