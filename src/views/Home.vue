@@ -1,12 +1,12 @@
 <template>
   <div id="index" style>
     <Menu mode="horizontal" :theme="theme1" active-name="1">
-      <MenuItem name="1" :to="'/index'">
+      <!-- <MenuItem name="1" :to="'/index'">
         <Icon type="ios-paper" />首页
       </MenuItem>
       <MenuItem name="2" :to="'/chat'">
         <Icon type="ios-people" />聊天室
-      </MenuItem>
+      </MenuItem> -->
       <MenuItem name="3" :to="'/wuziqi'">双人运动</MenuItem>
      <!--  <Submenu name="3">
         <template slot="title">
@@ -22,12 +22,12 @@
           <MenuItem name="3-5">万人运动</MenuItem>
         </MenuGroup>
       </Submenu> -->
-      <MenuItem name="4">
+     <!--  <MenuItem name="4">
         <Icon type="ios-construct" />运动设置
       </MenuItem>
       <MenuItem class="userImg" name="5" :to="'/user_setting'">
         <img  :src="userinfo.iconUrl" alt="" srcset="">
-      </MenuItem>
+      </MenuItem> -->
     </Menu>
     <router-view class="content"/>
     <!-- <div style="line-height:60px;text-align:center;">
