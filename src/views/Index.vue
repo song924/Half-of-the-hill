@@ -15,7 +15,7 @@ export default {
   computed: {},
 
   created() {
-      this.getUserInfo()
+      // this.getUserInfo()
   },
 
   mounted() {},

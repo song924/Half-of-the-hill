@@ -8,6 +8,12 @@
       <!-- <input type="button" value="白棋" @click="selectqz(2)" /> -->
       <span>当前棋手：{{this.pieceColor == "black" ? "白棋":"黑棋"}}</span>
       <!-- <input type="button" :value="toggle?'切换dom':'切换canvas'" class="toggle" @click="toggleF()" /> -->
+      <div>
+        <p>当前在线选手</p>
+        <ul>
+          <li v-for="(item,i) in userList">{{item.name}},<input v-if="item.name!=userInfo.account" type="button" value="邀请来一局"></input></li>
+        </ul>
+      </div>
     </div>
     <div class="main">
       <canvas v-show="toggle" id="myCanvas" ref="canvas" width="480" height="480">当前浏览器不支持Canvas</canvas>
@@ -42,7 +48,9 @@ export default {
       historyVal: [], //历史记录不被删除数组
       stepHistory: 0,
       domPiece: [], //
-      toggle: true //true为canvas,false为dom
+      toggle: true, //true为canvas,false为dom
+      userList:[],
+      userInfo:sessionStorage.userInfo ? JSON.parse(sessionStorage.userInfo) : ""
     };
   },
 
@@ -53,10 +61,11 @@ export default {
   created() {},
 
   mounted() {
+    // console.log(sessionStorage.userInfo)
     // 创建连接
-    this.$socket.emit("connect", 0);
+    this.$socket.emit("setRoom",this.userInfo.account);
     //监听广播回来的消息
-    this.sockets.listener.subscribe('link_get_piece', (data) => {
+    /* this.sockets.listener.subscribe('link_get_piece', (data) => {
         // console.log("接收的参数",data)
         var dx = data.split(",")[0]
         var dy = data.split(",")[1]
@@ -99,6 +108,10 @@ export default {
             alert("不能落在有棋子的地方！");
           }
         
+    }) */
+    this.sockets.listener.subscribe('getRoom', (data) => {
+        console.log(data)
+        this.userList = data
     })
 
     const myCanvas = document.getElementById("myCanvas");
@@ -134,6 +147,12 @@ export default {
       });
     }
   },
+
+  destroyed(){
+    //断开连接
+    // this.$socket.emit("setRoom",this.userInfo.account,status);
+  },
+
 
   methods: {
     toSocket(dx,dy,color) {

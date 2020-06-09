@@ -118,11 +118,7 @@ export default {
             });
             this.loading = false;
             // this.$store.state.userInfo = res.data.info[0]
-            var userInfo = {
-              name: res.data.info[0].nickname,
-              account: res.data.info[0].user_name,
-              iconUrl: res.data.info[0].user_img,
-            } 
+            var userInfo = res.data.info
             this.$store.commit('set_token',res.data.token)
             sessionStorage.setItem("userInfo",JSON.stringify(userInfo))
             console.log(this.$store.state.userInfo)
